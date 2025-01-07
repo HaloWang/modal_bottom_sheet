@@ -14,6 +14,7 @@ class BarBottomSheet extends StatelessWidget {
   final double? elevation;
   final ShapeBorder? shape;
   final SystemUiOverlayStyle? overlayStyle;
+  final bool additionalStyles;
 
   const BarBottomSheet({
     super.key,
@@ -24,6 +25,7 @@ class BarBottomSheet extends StatelessWidget {
     this.backgroundColor,
     this.elevation,
     this.overlayStyle,
+    this.additionalStyles = true,
   });
 
   @override
@@ -34,40 +36,43 @@ class BarBottomSheet extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 12),
-            SafeArea(
-              bottom: false,
-              child: control ??
-                  Container(
-                    height: 6,
-                    width: 40,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6)),
-                  ),
-            ),
-            SizedBox(height: 8),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.loose,
-              child: Material(
-                shape: shape ??
-                    RoundedRectangleBorder(
-                      side: BorderSide(),
-                      borderRadius: BorderRadius.only(
-                          topLeft: kDefaultBarTopRadius,
-                          topRight: kDefaultBarTopRadius),
+            if (additionalStyles) SizedBox(height: 12),
+            if (additionalStyles)
+              SafeArea(
+                bottom: false,
+                child: control ??
+                    Container(
+                      height: 6,
+                      width: 40,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(6)),
                     ),
-                clipBehavior: clipBehavior ?? Clip.hardEdge,
-                color: backgroundColor ?? Colors.white,
-                elevation: elevation ?? 2,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: MediaQuery.removePadding(
-                      context: context, removeTop: true, child: child),
+              ),
+            if (additionalStyles) SizedBox(height: 8),
+            if (additionalStyles)
+              Flexible(
+                flex: 1,
+                fit: FlexFit.loose,
+                child: Material(
+                  shape: shape ??
+                      RoundedRectangleBorder(
+                        side: BorderSide(),
+                        borderRadius: BorderRadius.only(
+                            topLeft: kDefaultBarTopRadius,
+                            topRight: kDefaultBarTopRadius),
+                      ),
+                  clipBehavior: clipBehavior ?? Clip.hardEdge,
+                  color: backgroundColor ?? Colors.white,
+                  elevation: elevation ?? 2,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: MediaQuery.removePadding(
+                        context: context, removeTop: true, child: child),
+                  ),
                 ),
               ),
-            ),
+            if (additionalStyles) child,
           ]),
     );
   }
@@ -93,6 +98,7 @@ Future<T?> showBarModalBottomSheet<T>({
   RouteSettings? settings,
   SystemUiOverlayStyle? overlayStyle,
   double? closeProgressThreshold,
+  bool additionalStyles = true,
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -102,6 +108,7 @@ Future<T?> showBarModalBottomSheet<T>({
     bounce: bounce,
     closeProgressThreshold: closeProgressThreshold,
     containerBuilder: (_, __, child) => BarBottomSheet(
+      additionalStyles: additionalStyles,
       child: child,
       control: topControl,
       clipBehavior: clipBehavior,

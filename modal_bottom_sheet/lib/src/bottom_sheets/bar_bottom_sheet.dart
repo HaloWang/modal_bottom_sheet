@@ -15,6 +15,7 @@ class BarBottomSheet extends StatelessWidget {
   final ShapeBorder? shape;
   final SystemUiOverlayStyle? overlayStyle;
   final bool additionalStyles;
+  final bool showDragIndicator;
 
   const BarBottomSheet({
     super.key,
@@ -26,6 +27,7 @@ class BarBottomSheet extends StatelessWidget {
     this.elevation,
     this.overlayStyle,
     this.additionalStyles = true,
+    this.showDragIndicator = true,
   });
 
   @override
@@ -37,7 +39,7 @@ class BarBottomSheet extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             if (additionalStyles) SizedBox(height: 12),
-            if (additionalStyles)
+            if (showDragIndicator)
               SafeArea(
                 bottom: false,
                 child: control ??
@@ -45,34 +47,33 @@ class BarBottomSheet extends StatelessWidget {
                       height: 6,
                       width: 40,
                       decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(6)),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
                     ),
               ),
-            if (additionalStyles) SizedBox(height: 8),
-            if (additionalStyles)
-              Flexible(
-                flex: 1,
-                fit: FlexFit.loose,
-                child: Material(
-                  shape: shape ??
-                      RoundedRectangleBorder(
-                        side: BorderSide(),
-                        borderRadius: BorderRadius.only(
-                            topLeft: kDefaultBarTopRadius,
-                            topRight: kDefaultBarTopRadius),
-                      ),
-                  clipBehavior: clipBehavior ?? Clip.hardEdge,
-                  color: backgroundColor ?? Colors.white,
-                  elevation: elevation ?? 2,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: MediaQuery.removePadding(
-                        context: context, removeTop: true, child: child),
-                  ),
+            if (showDragIndicator) SizedBox(height: 8),
+            Flexible(
+              flex: 1,
+              fit: FlexFit.loose,
+              child: Material(
+                shape: shape ??
+                    RoundedRectangleBorder(
+                      side: BorderSide(),
+                      borderRadius: BorderRadius.only(
+                          topLeft: kDefaultBarTopRadius,
+                          topRight: kDefaultBarTopRadius),
+                    ),
+                clipBehavior: clipBehavior ?? Clip.hardEdge,
+                color: backgroundColor ?? Colors.white,
+                elevation: elevation ?? 2,
+                child: SizedBox(
+                  width: double.infinity,
+                  child: MediaQuery.removePadding(
+                      context: context, removeTop: true, child: child),
                 ),
               ),
-            if (additionalStyles) child,
+            ),
           ]),
     );
   }
@@ -99,6 +100,7 @@ Future<T?> showBarModalBottomSheet<T>({
   SystemUiOverlayStyle? overlayStyle,
   double? closeProgressThreshold,
   bool additionalStyles = true,
+  bool showDragIndicator = true,
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -109,6 +111,7 @@ Future<T?> showBarModalBottomSheet<T>({
     closeProgressThreshold: closeProgressThreshold,
     containerBuilder: (_, __, child) => BarBottomSheet(
       additionalStyles: additionalStyles,
+      showDragIndicator: showDragIndicator,
       child: child,
       control: topControl,
       clipBehavior: clipBehavior,

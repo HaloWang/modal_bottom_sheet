@@ -16,6 +16,8 @@ class BarBottomSheet extends StatelessWidget {
   final SystemUiOverlayStyle? overlayStyle;
   final bool additionalStyles;
   final bool showDragIndicator;
+  final bool allowShape;
+  final bool pure;
 
   const BarBottomSheet({
     super.key,
@@ -26,55 +28,62 @@ class BarBottomSheet extends StatelessWidget {
     this.backgroundColor,
     this.elevation,
     this.overlayStyle,
-    this.additionalStyles = true,
-    this.showDragIndicator = true,
+    this.additionalStyles = false,
+    this.showDragIndicator = false,
+    this.allowShape = false,
+    this.pure = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle ?? SystemUiOverlayStyle.light,
-      child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (additionalStyles) SizedBox(height: 12),
-            if (showDragIndicator)
-              SafeArea(
-                bottom: false,
-                child: control ??
-                    Container(
-                      height: 6,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
+      child: pure
+          ? child
+          : Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (additionalStyles) SizedBox(height: 12),
+                if (showDragIndicator)
+                  SafeArea(
+                    bottom: false,
+                    child: control ??
+                        Container(
+                          height: 6,
+                          width: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                        ),
+                  ),
+                if (showDragIndicator) SizedBox(height: 8),
+                Flexible(
+                  flex: 1,
+                  fit: FlexFit.loose,
+                  child: Material(
+                    shape: allowShape
+                        ? (shape ??
+                            RoundedRectangleBorder(
+                              side: BorderSide(),
+                              borderRadius: BorderRadius.only(
+                                  topLeft: kDefaultBarTopRadius,
+                                  topRight: kDefaultBarTopRadius),
+                            ))
+                        : null,
+                    clipBehavior: clipBehavior ?? Clip.hardEdge,
+                    color: backgroundColor ?? Colors.white,
+                    elevation: elevation ?? 2,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: MediaQuery.removePadding(
+                          context: context, removeTop: true, child: child),
                     ),
-              ),
-            if (showDragIndicator) SizedBox(height: 8),
-            Flexible(
-              flex: 1,
-              fit: FlexFit.loose,
-              child: Material(
-                shape: shape ??
-                    RoundedRectangleBorder(
-                      side: BorderSide(),
-                      borderRadius: BorderRadius.only(
-                          topLeft: kDefaultBarTopRadius,
-                          topRight: kDefaultBarTopRadius),
-                    ),
-                clipBehavior: clipBehavior ?? Clip.hardEdge,
-                color: backgroundColor ?? Colors.white,
-                elevation: elevation ?? 2,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: MediaQuery.removePadding(
-                      context: context, removeTop: true, child: child),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ]),
     );
   }
 }
@@ -99,8 +108,10 @@ Future<T?> showBarModalBottomSheet<T>({
   RouteSettings? settings,
   SystemUiOverlayStyle? overlayStyle,
   double? closeProgressThreshold,
-  bool additionalStyles = true,
-  bool showDragIndicator = true,
+  bool additionalStyles = false,
+  bool showDragIndicator = false,
+  bool allowShape = false,
+  bool pure = true,
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -119,6 +130,8 @@ Future<T?> showBarModalBottomSheet<T>({
       backgroundColor: backgroundColor,
       elevation: elevation,
       overlayStyle: overlayStyle,
+      allowShape: allowShape,
+      pure: pure,
     ),
     secondAnimationController: secondAnimation,
     expanded: expand,

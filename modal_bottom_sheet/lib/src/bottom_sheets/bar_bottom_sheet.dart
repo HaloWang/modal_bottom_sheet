@@ -112,6 +112,7 @@ Future<T?> showBarModalBottomSheet<T>({
   bool showDragIndicator = false,
   bool allowShape = false,
   bool pure = true,
+  double minFlingVelocity = 500,
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -119,6 +120,7 @@ Future<T?> showBarModalBottomSheet<T>({
       .push(ModalSheetRoute<T>(
     builder: builder,
     bounce: bounce,
+    minFlingVelocity: minFlingVelocity,
     closeProgressThreshold: closeProgressThreshold,
     containerBuilder: (_, __, child) => BarBottomSheet(
       additionalStyles: additionalStyles,

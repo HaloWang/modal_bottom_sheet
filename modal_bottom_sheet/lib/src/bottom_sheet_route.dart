@@ -16,6 +16,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
     this.expanded = false,
     this.enableDrag = true,
     this.animationCurve,
+    this.minFlingVelocity = 500,
   });
 
   final double? closeProgressThreshold;
@@ -25,7 +26,7 @@ class _ModalBottomSheet<T> extends StatefulWidget {
   final bool enableDrag;
   final AnimationController? secondAnimationController;
   final Curve? animationCurve;
-
+  final double minFlingVelocity;
   @override
   _ModalBottomSheetState<T> createState() => _ModalBottomSheetState<T>();
 }
@@ -93,6 +94,7 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
               explicitChildNodes: true,
               child: ModalBottomSheet(
                 closeProgressThreshold: widget.closeProgressThreshold,
+                minFlingVelocity: widget.minFlingVelocity,
                 expanded: widget.route.expanded,
                 containerBuilder: widget.route.containerBuilder,
                 animationController: widget.route._animationController!,
@@ -149,6 +151,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
     this.animationCurve,
     Duration? duration,
     super.settings,
+    this.minFlingVelocity = 500,
   }) : duration = duration ?? _bottomSheetDuration;
 
   final double? closeProgressThreshold;
@@ -160,7 +163,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
   final bool isDismissible;
   final bool enableDrag;
   final ScrollController? scrollController;
-
+  final double minFlingVelocity;
   final Duration duration;
 
   final AnimationController? secondAnimationController;
@@ -215,6 +218,7 @@ class ModalSheetRoute<T> extends PageRoute<T> {
         bounce: bounce,
         enableDrag: enableDrag,
         animationCurve: animationCurve,
+        minFlingVelocity: minFlingVelocity,
       ),
     );
     return bottomSheet;

@@ -48,10 +48,17 @@ class ModalBottomSheet extends StatefulWidget {
     double? closeProgressThreshold,
     @Deprecated('Use preventPopThreshold instead') double? willPopThreshold,
     double? preventPopThreshold,
+    this.onVerticalDragUpdate,
+    this.onVerticalDragEnd,
+    this.onScrollUpdate,
   })  : preventPopThreshold =
             preventPopThreshold ?? willPopThreshold ?? _willPopThreshold,
         closeProgressThreshold =
             closeProgressThreshold ?? _closeProgressThreshold;
+
+  final Function(DragUpdateDetails)? onVerticalDragUpdate;
+  final Function(DragEndDetails)? onVerticalDragEnd;
+  final Function(ScrollNotification)? onScrollUpdate;
 
   /// The closeProgressThreshold parameter
   /// specifies when the bottom sheet will be dismissed when user drags it.
@@ -383,13 +390,16 @@ class ModalBottomSheetState extends State<ModalBottomSheet>
                     child: GestureDetector(
                       onVerticalDragUpdate: (details) {
                         _handleDragUpdate(details.delta.dy);
+                        widget.onVerticalDragUpdate?.call(details);
                       },
                       onVerticalDragEnd: (details) {
                         _handleDragEnd(details.primaryVelocity ?? 0);
+                        widget.onVerticalDragEnd?.call(details);
                       },
                       child: NotificationListener<ScrollNotification>(
                         onNotification: (ScrollNotification notification) {
                           _handleScrollUpdate(notification);
+                          widget.onScrollUpdate?.call(notification);
                           return false;
                         },
                         child: child!,

@@ -17,6 +17,9 @@ class _ModalBottomSheet<T> extends StatefulWidget {
     this.enableDrag = true,
     this.animationCurve,
     this.minFlingVelocity = 500,
+    this.onVerticalDragUpdate,
+    this.onVerticalDragEnd,
+    this.onScrollUpdate,
   });
 
   final double? closeProgressThreshold;
@@ -27,6 +30,9 @@ class _ModalBottomSheet<T> extends StatefulWidget {
   final AnimationController? secondAnimationController;
   final Curve? animationCurve;
   final double minFlingVelocity;
+  final Function(DragUpdateDetails)? onVerticalDragUpdate;
+  final Function(DragEndDetails)? onVerticalDragEnd;
+  final Function(ScrollNotification)? onScrollUpdate;
   @override
   _ModalBottomSheetState<T> createState() => _ModalBottomSheetState<T>();
 }
@@ -98,6 +104,9 @@ class _ModalBottomSheetState<T> extends State<_ModalBottomSheet<T>> {
                 expanded: widget.route.expanded,
                 containerBuilder: widget.route.containerBuilder,
                 animationController: widget.route._animationController!,
+                onVerticalDragUpdate: widget.onVerticalDragUpdate,
+                onVerticalDragEnd: widget.onVerticalDragEnd,
+                onScrollUpdate: widget.onScrollUpdate,
                 shouldClose: widget.route.popDisposition ==
                             RoutePopDisposition.doNotPop ||
                         widget.route._hasScopedWillPopCallback
@@ -152,7 +161,14 @@ class ModalSheetRoute<T> extends PageRoute<T> {
     Duration? duration,
     super.settings,
     this.minFlingVelocity = 500,
+    this.onVerticalDragUpdate,
+    this.onVerticalDragEnd,
+    this.onScrollUpdate,
   }) : duration = duration ?? _bottomSheetDuration;
+
+  final Function(DragUpdateDetails)? onVerticalDragUpdate;
+  final Function(DragEndDetails)? onVerticalDragEnd;
+  final Function(ScrollNotification)? onScrollUpdate;
 
   final double? closeProgressThreshold;
   final WidgetWithChildBuilder? containerBuilder;
@@ -219,6 +235,9 @@ class ModalSheetRoute<T> extends PageRoute<T> {
         enableDrag: enableDrag,
         animationCurve: animationCurve,
         minFlingVelocity: minFlingVelocity,
+        onVerticalDragUpdate: onVerticalDragUpdate,
+        onVerticalDragEnd: onVerticalDragEnd,
+        onScrollUpdate: onScrollUpdate,
       ),
     );
     return bottomSheet;

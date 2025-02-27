@@ -113,6 +113,9 @@ Future<T?> showBarModalBottomSheet<T>({
   bool allowShape = false,
   bool pure = true,
   double minFlingVelocity = 500,
+  Function(DragUpdateDetails)? onVerticalDragUpdate,
+  Function(DragEndDetails)? onVerticalDragEnd,
+  Function(ScrollNotification)? onScrollUpdate,
 }) async {
   assert(debugCheckHasMediaQuery(context));
   assert(debugCheckHasMaterialLocalizations(context));
@@ -135,6 +138,9 @@ Future<T?> showBarModalBottomSheet<T>({
       allowShape: allowShape,
       pure: pure,
     ),
+    onVerticalDragUpdate: onVerticalDragUpdate,
+    onVerticalDragEnd: onVerticalDragEnd,
+    onScrollUpdate: onScrollUpdate,
     secondAnimationController: secondAnimation,
     expanded: expand,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
